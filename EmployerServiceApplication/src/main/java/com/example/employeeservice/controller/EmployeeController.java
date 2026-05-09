@@ -1,6 +1,7 @@
 package com.example.employeeservice.controller;
 
 import com.example.employeeservice.entity.Employee;
+import com.example.employeeservice.service.EmployeeApiPullService;
 import com.example.employeeservice.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,11 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final EmployeeApiPullService employeeApiPullService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeApiPullService employeeApiPullService) {
         this.employeeService = employeeService;
+        this.employeeApiPullService = employeeApiPullService;
     }
 
     @PostMapping
@@ -49,5 +52,11 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getEmployeesByEmployeeIds(
             @RequestParam List<String> employeeIds) {
         return ResponseEntity.ok(employeeService.getEmployeesByEmployeeIds(employeeIds));
+    }
+
+    @PostMapping("/pull-from-api")
+    public ResponseEntity<String> pullEmployeesFromApi() {
+        int count = employeeApiPullService.pullEmployeesFromApi();
+        return ResponseEntity.ok("Pulled and saved " + count + " employees.");
     }
 }
